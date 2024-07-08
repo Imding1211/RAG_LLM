@@ -63,7 +63,7 @@ To get a local copy up and running, follow these simple steps.
    ```sh
    ollama serve
    ```
-You can open the browser and enter http://127.0.0.1:11434 to check if the Ollama server is operating normally.
+   You can open the browser and enter http://127.0.0.1:11434 to check if the Ollama server is operating normally.
 
 8. Download the llama3
    ```sh
