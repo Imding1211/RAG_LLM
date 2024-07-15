@@ -89,6 +89,11 @@ To get a local copy up and running, follow these simple steps.
    python main.py run
    ```
 
+* You can use the following example questions to test if the program is running successfully.
+   ```sh
+   What hardware setup was used for training models?
+   ```
+   
 * You can place your PDF files into the "data" folder, and run the following command to populate data to the database.
    ```sh
    python main.py populate
