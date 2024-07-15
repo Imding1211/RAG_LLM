@@ -94,6 +94,11 @@ To get a local copy up and running, follow these simple steps.
    What hardware setup was used for training this models?
    ```
    
+* If the following message appears, it means the program is running successfully.
+   ```
+   1 machine with 8 NVIDIA P100 GPUs.
+   ```
+   
 * You can place your PDF files into the "data" folder, and run the following command to populate data to the database.
    ```sh
    python main.py populate
