@@ -90,8 +90,8 @@ To get a local copy up and running, follow these simple steps.
    ```
 
 * You can use the following example questions to test if the program is running successfully.
-   ```sh
-   What hardware setup was used for training models?
+   ```
+   What hardware setup was used for training this models?
    ```
    
 * You can place your PDF files into the "data" folder, and run the following command to populate data to the database.
