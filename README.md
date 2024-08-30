@@ -13,7 +13,7 @@
 
 ## About The Project
 
-This project demonstrates a Retrieval-Augmented Generation (RAG) system utilizing the latest Language Model (LLM) technologies. By leveraging PDF documents as the data source, ChromaDB as the database for efficient retrieval, and Llama3 for language modeling, this project aims to provide high-quality, contextually relevant responses. The embedding model used is MXBAI-embed-large, deployed by Ollama, ensuring robust vector representations of the data.
+This project demonstrates a Retrieval-Augmented Generation (RAG) system utilizing the latest Language Model (LLM) technologies. By leveraging PDF documents as the data source, ChromaDB as the database for efficient retrieval, and Gemma2 2B for language modeling, this project aims to provide high-quality, contextually relevant responses. The embedding model used is All-minilm, deployed by SBERT, ensuring robust vector representations of the data.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
