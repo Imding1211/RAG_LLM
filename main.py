@@ -2,6 +2,10 @@ from database_controller import populate_database, clear_database
 from query_controller import query_rag
 import argparse
 
+
+LLM_MODEL       = "gemma2:2b"
+EMBEDDING_MODEL = "all-minilm"
+
 def run():
     while True:
         query_text = input("Enter your question or enter exit to stop:\n")
@@ -9,14 +13,14 @@ def run():
         if query_text == "exit":
             break
 
-        query_rag(query_text)
+        query_rag(query_text, LLM_MODEL, EMBEDDING_MODEL)
         print("\n")
 
 def populate(reset):
     if reset:
         clear_database()
 
-    populate_database()
+    populate_database(EMBEDDING_MODEL)
         
 
 def main():

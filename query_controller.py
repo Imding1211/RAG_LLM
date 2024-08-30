@@ -1,7 +1,7 @@
 from langchain_community.embeddings.ollama import OllamaEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_community.vectorstores import Chroma
 from langchain_community.llms.ollama import Ollama
+from langchain_chroma import Chroma
 import argparse
 
 
@@ -19,9 +19,9 @@ Answer the question based on the above context: {question}
 """
 
 
-def query_rag(query_text: str):
+def query_rag(query_text: str, LLM_model: str, embedding_model: str):
     # 獲取嵌入函數
-    embedding_function = OllamaEmbeddings(model="mxbai-embed-large")
+    embedding_function = OllamaEmbeddings(model=embedding_model)
 
     # 初始化Chroma向量存儲
     db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
@@ -35,7 +35,7 @@ def query_rag(query_text: str):
     prompt          = prompt_template.format(context=context_text, question=query_text)
 
     # 初始化Ollama模型
-    model         = Ollama(model="llama3")
+    model         = Ollama(model=LLM_model)
     response_text = model.invoke(prompt)
 
     # 格式化並輸出回應
@@ -54,4 +54,4 @@ if __name__ == "__main__":
     parser.add_argument("query_text", type=str, help="The query text.")
     args = parser.parse_args()
     query_text = args.query_text
-    query_rag(query_text)
+    query_rag(query_text, "gemma2:2b", "all-minilm")

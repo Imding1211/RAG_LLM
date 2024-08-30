@@ -1,21 +1,20 @@
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings.ollama import OllamaEmbeddings
-from langchain_community.vectorstores import Chroma
 from langchain_core.documents import Document
+from langchain_chroma import Chroma
 import argparse
 import shutil
 import os
 
 
-CHROMA_PATH = "chroma"
-DATA_PATH   = "data"
+CHROMA_PATH     = "chroma"
+DATA_PATH       = "data"
 
-
-def populate_database():
+def populate_database(embedding_model: str):
     documents = load_documents()
     chunks = split_documents(documents)
-    add_to_chroma(chunks)
+    add_to_chroma(chunks, embedding_model)
 
 
 def clear_database():
@@ -42,11 +41,11 @@ def split_documents(documents: list[Document]):
     return text_splitter.split_documents(documents)
 
 
-def add_to_chroma(chunks: list[Document]):
+def add_to_chroma(chunks: list[Document], embedding_model: str):
     # 初始化Chroma向量存儲
     db = Chroma(
         persist_directory  = CHROMA_PATH,  # 持久化存儲目錄
-        embedding_function = OllamaEmbeddings(model="mxbai-embed-large")  # 嵌入函數
+        embedding_function = OllamaEmbeddings(model=embedding_model)  # 嵌入函數
     )
 
     # 計算每個塊的ID
@@ -66,7 +65,7 @@ def add_to_chroma(chunks: list[Document]):
         print(f"Adding new documents: {len(new_chunks)}")
         new_chunk_ids = [chunk.metadata["id"] for chunk in new_chunks]
         db.add_documents(new_chunks, ids=new_chunk_ids)
-        db.persist()
+
     else:
         print("No new documents to add")
 
@@ -106,4 +105,4 @@ if __name__ == "__main__":
 
     documents = load_documents()
     chunks = split_documents(documents)
-    add_to_chroma(chunks)
+    add_to_chroma(chunks, "all-minilm")
