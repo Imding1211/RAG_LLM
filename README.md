@@ -21,8 +21,8 @@ This project demonstrates a Retrieval-Augmented Generation (RAG) system utilizin
 
 * LangChain
 * ChromaDB
-* Llama3
-* Ollama MXBAI-embed-large
+* Gemma2 2B
+* All-minilm
   
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -67,12 +67,12 @@ To get a local copy up and running, follow these simple steps.
 
 8. Download the llama3
    ```sh
-   ollama pull llama3
+   ollama pull gemma2:2b
    ```
    
 9. Download the embedding model
    ```sh
-   ollama pull mxbai-embed-large
+   ollama pull all-minilm
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
