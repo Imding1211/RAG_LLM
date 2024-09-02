@@ -20,11 +20,12 @@ Answer the question based on the above context: {question}
 
 
 def query_rag(query_text: str, LLM_model: str, embedding_model: str):
-    # 獲取嵌入函數
-    embedding_function = OllamaEmbeddings(model=embedding_model)
 
     # 初始化Chroma向量存儲
-    db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
+    db = Chroma(
+        persist_directory  = CHROMA_PATH, 
+        embedding_function = OllamaEmbeddings(model=embedding_model)
+        )
 
     # 進行相似度搜索
     results = db.similarity_search_with_score(query_text, k=5)
@@ -46,7 +47,6 @@ def query_rag(query_text: str, LLM_model: str, embedding_model: str):
     #formatted_response = f"Response: {response_text}\nSources: {sources}"
     
     print(formatted_response)
-    return response_text
 
 
 if __name__ == "__main__":
