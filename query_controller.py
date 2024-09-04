@@ -1,23 +1,25 @@
+
 from langchain_community.embeddings.ollama import OllamaEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.llms.ollama import Ollama
 from langchain_chroma import Chroma
 import argparse
 
+#=============================================================================#
 
 CHROMA_PATH = "chroma"
 
 # 定義提示模板
 PROMPT_TEMPLATE = """
-Answer the question based only on the following context:
 
 {context}
 
 ---
 
-Answer the question based on the above context: {question}
+根據以上資料用繁體中文回答問題: {question}
 """
 
+#=============================================================================#
 
 def query_rag(query_text: str, LLM_model: str, embedding_model: str):
 
@@ -48,10 +50,16 @@ def query_rag(query_text: str, LLM_model: str, embedding_model: str):
     
     print(formatted_response)
 
+#=============================================================================#
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser()
+
     parser.add_argument("query_text", type=str, help="The query text.")
+
     args = parser.parse_args()
+
     query_text = args.query_text
+
     query_rag(query_text, "gemma2:2b", "all-minilm")

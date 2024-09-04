@@ -1,10 +1,14 @@
+
 from database_controller import populate_database, clear_database
 from query_controller import query_rag
 import argparse
 
+#=============================================================================#
 
 LLM_MODEL       = "gemma2:2b"
 EMBEDDING_MODEL = "all-minilm"
+
+#=============================================================================#
 
 def run():
     while True:
@@ -16,12 +20,15 @@ def run():
         query_rag(query_text, LLM_MODEL, EMBEDDING_MODEL)
         print("\n")
 
+#=============================================================================#
+
 def populate(reset):
     if reset:
         clear_database()
 
     populate_database(EMBEDDING_MODEL)
-        
+
+#=============================================================================#
 
 def main():
     parser = argparse.ArgumentParser(description="程式描述")
@@ -44,5 +51,8 @@ def main():
     else:
         parser.print_help()
 
+#=============================================================================#
+
 if __name__ == "__main__":
+
     main()

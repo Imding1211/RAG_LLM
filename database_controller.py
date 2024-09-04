@@ -1,3 +1,4 @@
+
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings.ollama import OllamaEmbeddings
@@ -7,15 +8,19 @@ import argparse
 import shutil
 import os
 
+#=============================================================================#
 
 CHROMA_PATH     = "chroma"
 DATA_PATH       = "data"
+
+#=============================================================================#
 
 def populate_database(embedding_model: str):
     documents = load_documents()
     chunks = split_documents(documents)
     add_to_chroma(chunks, embedding_model)
 
+#=============================================================================#
 
 def clear_database():
     # 清空資料庫目錄
@@ -23,12 +28,14 @@ def clear_database():
     if os.path.exists(CHROMA_PATH):
         shutil.rmtree(CHROMA_PATH)
 
+#=============================================================================#
 
 def load_documents():
     # 載入指定資料夾中的PDF文件
     document_loader = PyPDFDirectoryLoader(DATA_PATH)
     return document_loader.load()
 
+#=============================================================================#
 
 def split_documents(documents: list[Document]):
     # 使用遞歸字符分割器分割文件
@@ -40,6 +47,7 @@ def split_documents(documents: list[Document]):
     )
     return text_splitter.split_documents(documents)
 
+#=============================================================================#
 
 def add_to_chroma(chunks: list[Document], embedding_model: str):
     # 初始化Chroma向量存儲
@@ -69,6 +77,7 @@ def add_to_chroma(chunks: list[Document], embedding_model: str):
     else:
         print("No new documents to add")
 
+#=============================================================================#
 
 def calculate_chunk_ids(chunks):
     # 計算每個塊的唯一ID
@@ -95,14 +104,21 @@ def calculate_chunk_ids(chunks):
 
     return chunks
 
+#=============================================================================#
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser()
+
     parser.add_argument("--reset", action="store_true", help="Reset the database.")
+
     args = parser.parse_args()
+
     if args.reset:
         clear_database()
 
     documents = load_documents()
+
     chunks = split_documents(documents)
+    
     add_to_chroma(chunks, "all-minilm")
