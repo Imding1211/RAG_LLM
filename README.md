@@ -22,7 +22,7 @@ This project demonstrates a Retrieval-Augmented Generation (RAG) system utilizin
 * LangChain
 * ChromaDB
 * Gemma2 2B
-* All-minilm
+* all-MiniLM
   
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
