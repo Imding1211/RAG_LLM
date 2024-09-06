@@ -5,8 +5,10 @@ import argparse
 
 #=============================================================================#
 
+QUERY_NUM       = 5
 LLM_MODEL       = "gemma2:2b"
 EMBEDDING_MODEL = "all-minilm"
+CHROMA_PATH     = "chroma"
 
 #=============================================================================#
 
@@ -17,7 +19,7 @@ def run():
         if query_text == "exit":
             break
 
-        query_rag(query_text, LLM_MODEL, EMBEDDING_MODEL)
+        query_rag(query_text, QUERY_NUM, CHROMA_PATH, LLM_MODEL, EMBEDDING_MODEL)
         print("\n")
 
 #=============================================================================#

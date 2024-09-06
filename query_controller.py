@@ -7,8 +7,6 @@ import argparse
 
 #=============================================================================#
 
-CHROMA_PATH = "chroma"
-
 # 定義提示模板
 PROMPT_TEMPLATE = """
 
@@ -21,45 +19,59 @@ PROMPT_TEMPLATE = """
 
 #=============================================================================#
 
-def query_rag(query_text: str, LLM_model: str, embedding_model: str):
-
+def generate_results(query_text, query_num, chroma_path, embedding_model):
+    
     # 初始化Chroma向量存儲
     db = Chroma(
-        persist_directory  = CHROMA_PATH, 
+        persist_directory  = chroma_path, 
         embedding_function = OllamaEmbeddings(model=embedding_model)
         )
 
     # 進行相似度搜索
-    results = db.similarity_search_with_score(query_text, k=5)
+    query_results = db.similarity_search_with_score(query_text, k=query_num)
 
-    # 構建上下文文本
-    context_text    = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
-    prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
-    prompt          = prompt_template.format(context=context_text, question=query_text)
-
-    # 初始化Ollama模型
-    model         = Ollama(model=LLM_model)
-    response_text = model.invoke(prompt)
-
-    # 格式化並輸出回應
-    sources            = [doc.metadata.get("id", None) for doc, _score in results]
-    formatted_response = f"Response: {response_text}"
-
-    # 如需要顯示sources將以下註解刪除
-    #formatted_response = f"Response: {response_text}\nSources: {sources}"
-    
-    print(formatted_response)
+    return query_results
 
 #=============================================================================#
 
-if __name__ == "__main__":
+def generate_prompt(query_text, query_results):
+    
+    # 構建上下文文本
+    context_text    = "\n\n---\n\n".join([doc.page_content for doc, _score in query_results])
+    prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+    prompt          = prompt_template.format(context=context_text, question=query_text)
 
-    parser = argparse.ArgumentParser()
+    return prompt
 
-    parser.add_argument("query_text", type=str, help="The query text.")
+#=============================================================================#
 
-    args = parser.parse_args()
+def generate_response(prompt, query_results, llm_model, show_sources=False):
 
-    query_text = args.query_text
+    # 初始化Ollama模型
+    model = Ollama(model=llm_model)
 
-    query_rag(query_text, "gemma2:2b", "all-minilm")
+    # 生成回覆
+    response_text = model.invoke(prompt)
+
+    # 格式化並輸出回應
+    sources  = [doc.metadata.get("id", None) for doc, _score in query_results]
+    response = f"Response: {response_text}"
+
+    if show_sources:
+        # 如需要顯示sources將以下註解刪除
+        response = f"Response: {response_text}\nSources: {sources}"
+    
+    return response
+
+#=============================================================================#
+
+def query_rag(query_text, query_num, chroma_path, llm_model, embedding_model):
+    
+    results  = generate_results(query_text, query_num, chroma_path, embedding_model)
+    
+    prompt   = generate_prompt(query_text, results)
+    
+    response = generate_response(prompt, results, llm_model, show_sources=False)
+    
+    print(response)
+
