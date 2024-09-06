@@ -8,7 +8,17 @@ import argparse
 QUERY_NUM       = 5
 LLM_MODEL       = "gemma2:2b"
 EMBEDDING_MODEL = "all-minilm"
+DATA_PATH       = "data"
 CHROMA_PATH     = "chroma"
+
+PROMPT_TEMPLATE = """
+
+{context}
+
+---
+
+根據以上資料用繁體中文回答問題: {question}
+"""
 
 #=============================================================================#
 
@@ -19,16 +29,16 @@ def run():
         if query_text == "exit":
             break
 
-        query_rag(query_text, QUERY_NUM, CHROMA_PATH, LLM_MODEL, EMBEDDING_MODEL)
+        query_rag(query_text, QUERY_NUM, CHROMA_PATH, LLM_MODEL, EMBEDDING_MODEL, PROMPT_TEMPLATE)
         print("\n")
 
 #=============================================================================#
 
 def populate(reset):
     if reset:
-        clear_database()
+        clear_database(CHROMA_PATH)
 
-    populate_database(EMBEDDING_MODEL)
+    populate_database(EMBEDDING_MODEL, DATA_PATH, CHROMA_PATH)
 
 #=============================================================================#
 

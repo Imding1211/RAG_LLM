@@ -7,15 +7,15 @@ import argparse
 
 #=============================================================================#
 
-# 定義提示模板
-PROMPT_TEMPLATE = """
-
-{context}
-
----
-
-根據以上資料用繁體中文回答問題: {question}
-"""
+def query_rag(query_text, query_num, chroma_path, llm_model, embedding_model, prompt_template):
+    
+    results  = generate_results(query_text, query_num, chroma_path, embedding_model)
+    
+    prompt   = generate_prompt(query_text, results, prompt_template)
+    
+    response = generate_response(prompt, results, llm_model, show_sources=False)
+    
+    print(response)
 
 #=============================================================================#
 
@@ -34,11 +34,11 @@ def generate_results(query_text, query_num, chroma_path, embedding_model):
 
 #=============================================================================#
 
-def generate_prompt(query_text, query_results):
+def generate_prompt(query_text, query_results, prompt_template):
     
     # 構建上下文文本
     context_text    = "\n\n---\n\n".join([doc.page_content for doc, _score in query_results])
-    prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+    prompt_template = ChatPromptTemplate.from_template(prompt_template)
     prompt          = prompt_template.format(context=context_text, question=query_text)
 
     return prompt
@@ -63,15 +63,5 @@ def generate_response(prompt, query_results, llm_model, show_sources=False):
     
     return response
 
-#=============================================================================#
 
-def query_rag(query_text, query_num, chroma_path, llm_model, embedding_model):
-    
-    results  = generate_results(query_text, query_num, chroma_path, embedding_model)
-    
-    prompt   = generate_prompt(query_text, results)
-    
-    response = generate_response(prompt, results, llm_model, show_sources=False)
-    
-    print(response)
 

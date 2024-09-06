@@ -4,40 +4,34 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings.ollama import OllamaEmbeddings
 from langchain_core.documents import Document
 from langchain_chroma import Chroma
-import argparse
 import shutil
 import os
 
 #=============================================================================#
 
-CHROMA_PATH     = "chroma"
-DATA_PATH       = "data"
-
-#=============================================================================#
-
-def populate_database(embedding_model: str):
-    documents = load_documents()
+def populate_database(embedding_model, data_path, chroma_path):
+    documents = load_documents(data_path)
     chunks = split_documents(documents)
-    add_to_chroma(chunks, embedding_model)
+    add_to_chroma(chunks, embedding_model, chroma_path)
 
 #=============================================================================#
 
-def clear_database():
+def clear_database(chroma_path):
     # 清空資料庫目錄
     print("Clearing Database")
-    if os.path.exists(CHROMA_PATH):
-        shutil.rmtree(CHROMA_PATH)
+    if os.path.exists(chroma_path):
+        shutil.rmtree(chroma_path)
 
 #=============================================================================#
 
-def load_documents():
+def load_documents(data_path):
     # 載入指定資料夾中的PDF文件
-    document_loader = PyPDFDirectoryLoader(DATA_PATH)
+    document_loader = PyPDFDirectoryLoader(data_path)
     return document_loader.load()
 
 #=============================================================================#
 
-def split_documents(documents: list[Document]):
+def split_documents(documents):
     # 使用遞歸字符分割器分割文件
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size         = 800,   # 每塊的大小
@@ -49,10 +43,10 @@ def split_documents(documents: list[Document]):
 
 #=============================================================================#
 
-def add_to_chroma(chunks: list[Document], embedding_model: str):
+def add_to_chroma(chunks, embedding_model, chroma_path):
     # 初始化Chroma向量存儲
     db = Chroma(
-        persist_directory  = CHROMA_PATH,  # 持久化存儲目錄
+        persist_directory  = chroma_path,  # 持久化存儲目錄
         embedding_function = OllamaEmbeddings(model=embedding_model)  # 嵌入函數
     )
 
@@ -104,21 +98,3 @@ def calculate_chunk_ids(chunks):
 
     return chunks
 
-#=============================================================================#
-
-if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--reset", action="store_true", help="Reset the database.")
-
-    args = parser.parse_args()
-
-    if args.reset:
-        clear_database()
-
-    documents = load_documents()
-
-    chunks = split_documents(documents)
-    
-    add_to_chroma(chunks, "all-minilm")
