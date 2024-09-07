@@ -15,7 +15,7 @@ def query_rag(query_text, query_num, chroma_path, llm_model, embedding_model, pr
     
     response = generate_response(prompt, results, llm_model, show_sources=False)
     
-    print(response)
+    return response
 
 #=============================================================================#
 

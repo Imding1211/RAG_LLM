@@ -29,7 +29,8 @@ def run():
         if query_text == "exit":
             break
 
-        query_rag(query_text, QUERY_NUM, CHROMA_PATH, LLM_MODEL, EMBEDDING_MODEL, PROMPT_TEMPLATE)
+        response = query_rag(query_text, QUERY_NUM, CHROMA_PATH, LLM_MODEL, EMBEDDING_MODEL, PROMPT_TEMPLATE)
+        print(response)
         print("\n")
 
 #=============================================================================#
@@ -37,12 +38,22 @@ def run():
 def populate(reset):
     if reset:
         clear_database(CHROMA_PATH)
+        print("Clearing Database")
 
-    populate_database(EMBEDDING_MODEL, DATA_PATH, CHROMA_PATH)
+    existing_ids, new_chunks = populate_database(EMBEDDING_MODEL, DATA_PATH, CHROMA_PATH)
+
+    print(f"Number of existing documents in DB: {len(existing_ids)}")
+
+    if len(new_chunks):
+        print(f"Adding new documents: {len(new_chunks)}")
+
+    else:
+        print("No new documents to add")
 
 #=============================================================================#
 
-def main():
+if __name__ == "__main__":
+
     parser = argparse.ArgumentParser(description="程式描述")
     subparsers = parser.add_subparsers(dest="command", help="子命令")
 
@@ -62,9 +73,3 @@ def main():
         args.func(args)
     else:
         parser.print_help()
-
-#=============================================================================#
-
-if __name__ == "__main__":
-
-    main()
