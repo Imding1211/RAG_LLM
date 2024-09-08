@@ -104,7 +104,6 @@ def add_to_chroma(chunks, embedding_model, chroma_path):
     # 獲取現有文件的ID
     existing_ids = calculate_existing_ids(db)
     
-
     new_chunks = []
     for chunk in chunks_with_ids:
         if chunk.metadata["id"] not in existing_ids:
