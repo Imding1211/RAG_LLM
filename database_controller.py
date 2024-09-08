@@ -1,31 +1,26 @@
 
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.embeddings.ollama import OllamaEmbeddings
 from langchain_core.documents import Document
-from langchain_chroma import Chroma
-import shutil
-import os
 
 #=============================================================================#
 
-def populate_database(embedding_model, data_path, chroma_path):
+def populate_database(embedding_model, data_path, database):
 
     documents = load_documents(data_path)
 
     chunks = split_documents(documents)
 
-    existing_ids, new_chunks = add_to_chroma(chunks, embedding_model, chroma_path)
+    new_chunks = add_to_chroma(chunks, database)
 
-    return existing_ids, new_chunks
+    return new_chunks
 
 #=============================================================================#
 
-def clear_database(chroma_path):
+def clear_database(delete_ids, database):
 
-    # 清空資料庫目錄
-    if os.path.exists(chroma_path):
-        shutil.rmtree(chroma_path)
+    if list(delete_ids):
+        database.delete(ids=list(delete_ids))
 
 #=============================================================================#
 
@@ -80,29 +75,23 @@ def calculate_chunk_ids(chunks):
 
 #=============================================================================#
 
-def calculate_existing_ids(db):
+def calculate_existing_ids(database):
 
     # 獲取現有文件的ID
-    existing_items = db.get(include=[])
+    existing_items = database.get(include=[])
     existing_ids   = set(existing_items["ids"])
 
     return existing_ids
 
 #=============================================================================#
 
-def add_to_chroma(chunks, embedding_model, chroma_path):
-
-    # 初始化Chroma向量存儲
-    db = Chroma(
-        persist_directory  = chroma_path,  # 持久化存儲目錄
-        embedding_function = OllamaEmbeddings(model=embedding_model)  # 嵌入函數
-    )
+def add_to_chroma(chunks, database):
 
     # 計算每個塊的ID
     chunks_with_ids = calculate_chunk_ids(chunks)
 
     # 獲取現有文件的ID
-    existing_ids = calculate_existing_ids(db)
+    existing_ids = calculate_existing_ids(database)
     
     new_chunks = []
     for chunk in chunks_with_ids:
@@ -111,6 +100,6 @@ def add_to_chroma(chunks, embedding_model, chroma_path):
 
     if len(new_chunks):
         new_chunk_ids = [chunk.metadata["id"] for chunk in new_chunks]
-        db.add_documents(new_chunks, ids=new_chunk_ids)
+        database.add_documents(new_chunks, ids=new_chunk_ids)
 
-    return existing_ids, new_chunks
+    return new_chunks

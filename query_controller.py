@@ -1,34 +1,24 @@
 
-from langchain_community.embeddings.ollama import OllamaEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_community.llms.ollama import Ollama
-from langchain_chroma import Chroma
-import argparse
 
 #=============================================================================#
 
-def query_rag(query_text, query_num, chroma_path, llm_model, embedding_model, prompt_template):
+def query_rag(query_text, query_num, llm_model, prompt_template, database):
     
-    results  = generate_results(query_text, query_num, chroma_path, embedding_model)
+    results  = generate_results(query_text, query_num, database)
     
     prompt   = generate_prompt(query_text, results, prompt_template)
     
-    response = generate_response(prompt, results, llm_model, show_sources=False)
+    response = generate_response(prompt, results, llm_model)
     
     return response
 
 #=============================================================================#
 
-def generate_results(query_text, query_num, chroma_path, embedding_model):
+def generate_results(query_text, query_num, database):
     
-    # 初始化Chroma向量存儲
-    db = Chroma(
-        persist_directory  = chroma_path, 
-        embedding_function = OllamaEmbeddings(model=embedding_model)
-        )
-
     # 進行相似度搜索
-    query_results = db.similarity_search_with_score(query_text, k=query_num)
+    query_results = database.similarity_search_with_score(query_text, k=query_num)
 
     return query_results
 
@@ -47,11 +37,8 @@ def generate_prompt(query_text, query_results, prompt_template):
 
 def generate_response(prompt, query_results, llm_model, show_sources=False):
 
-    # 初始化Ollama模型
-    model = Ollama(model=llm_model)
-
     # 生成回覆
-    response_text = model.invoke(prompt)
+    response_text = llm_model.invoke(prompt)
 
     # 格式化並輸出回應
     sources  = [doc.metadata.get("id", None) for doc, _score in query_results]

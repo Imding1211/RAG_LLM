@@ -1,15 +1,30 @@
 
-from database_controller import populate_database, clear_database
+from database_controller import populate_database, clear_database, calculate_existing_ids
+from langchain_community.embeddings.ollama import OllamaEmbeddings
+from langchain_community.llms.ollama import Ollama
 from query_controller import query_rag
+from langchain_chroma import Chroma
 import argparse
 
 #=============================================================================#
 
+LLM_MODEL_NAME       = "gemma2:2b"
+EMBEDDING_MODEL_NAME = "all-minilm"
+
 QUERY_NUM       = 5
-LLM_MODEL       = "gemma2:2b"
-EMBEDDING_MODEL = "all-minilm"
 DATA_PATH       = "data"
 CHROMA_PATH     = "chroma"
+
+LLM_MODEL       = Ollama(model=LLM_MODEL_NAME)
+EMBEDDING_MODEL = OllamaEmbeddings(model=EMBEDDING_MODEL_NAME)
+
+# 初始化Chroma向量存儲
+DATABASE = Chroma(
+    persist_directory  = CHROMA_PATH, 
+    embedding_function = EMBEDDING_MODEL
+    )
+
+#=============================================================================#
 
 PROMPT_TEMPLATE = """
 
@@ -23,32 +38,44 @@ PROMPT_TEMPLATE = """
 #=============================================================================#
 
 def run():
+
     while True:
         query_text = input("Enter your question or enter exit to stop:\n")
 
         if query_text == "exit":
             break
 
-        response = query_rag(query_text, QUERY_NUM, CHROMA_PATH, LLM_MODEL, EMBEDDING_MODEL, PROMPT_TEMPLATE)
+        response = query_rag(query_text, QUERY_NUM, LLM_MODEL, PROMPT_TEMPLATE, DATABASE)
         print(response)
         print("\n")
 
 #=============================================================================#
 
 def populate(reset):
-    if reset:
-        clear_database(CHROMA_PATH)
-        print("Clearing Database")
 
-    existing_ids, new_chunks = populate_database(EMBEDDING_MODEL, DATA_PATH, CHROMA_PATH)
+    if reset:
+        clear()
+
+    existing_ids = calculate_existing_ids(DATABASE)
 
     print(f"Number of existing documents in DB: {len(existing_ids)}")
+
+    new_chunks = populate_database(EMBEDDING_MODEL, DATA_PATH, DATABASE)
 
     if len(new_chunks):
         print(f"Adding new documents: {len(new_chunks)}")
 
     else:
         print("No new documents to add")
+
+#=============================================================================#
+
+def clear():
+
+    delete_ids = calculate_existing_ids(DATABASE)
+    clear_database(delete_ids, DATABASE)
+
+    print("Clearing Database")
 
 #=============================================================================#
 
@@ -65,6 +92,10 @@ if __name__ == "__main__":
     parser_populate = subparsers.add_parser('populate', help='更新資料庫')
     parser_populate.add_argument('--reset', action='store_true', help='重置資料庫')
     parser_populate.set_defaults(func=lambda args: populate(args.reset))
+
+    # 定義 clear 子命令
+    parser_clear = subparsers.add_parser('clear', help='清空資料庫')
+    parser_clear.set_defaults(func=lambda args: clear())
 
     args = parser.parse_args()
 
