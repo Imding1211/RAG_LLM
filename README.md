@@ -71,7 +71,7 @@ To get a local copy up and running, follow these simple steps.
    ```
    You can open the browser and enter http://127.0.0.1:11434 to check if the Ollama server is operating normally.
 
-8. Download the llama3
+8. Download the LLM
    ```sh
    ollama pull gemma2:2b
    ```
