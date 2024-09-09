@@ -55,22 +55,28 @@ To get a local copy up and running, follow these simple steps.
    pip install -r requirements.txt
    ```
    
-6. Install Ollama
+6. You can install Ollama directly on your computer or build it using Docker as well.
+   * [On your computer](https://ollama.com/download)
+   * [Using Docker](https://hub.docker.com/r/ollama/ollama)
 
-   [Download Ollama](https://ollama.com/download)
+   If you use Docker to build it, all subsequent commands related to Ollama need to be prefixed with the following command.
+   ```
+   docker exec -it <container name> ollama <command>
+   ```
+   Where `container name` should be replaced with your container's name.
 
-7. Activate Ollama
+8. Activate Ollama
    ```sh
    ollama serve
    ```
    You can open the browser and enter http://127.0.0.1:11434 to check if the Ollama server is operating normally.
 
-8. Download the llama3
+9. Download the llama3
    ```sh
    ollama pull gemma2:2b
    ```
    
-9. Download the embedding model
+10. Download the embedding model
    ```sh
    ollama pull all-minilm
    ```
