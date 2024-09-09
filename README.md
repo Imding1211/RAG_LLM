@@ -65,21 +65,21 @@ To get a local copy up and running, follow these simple steps.
    ```
    Where `container name` should be replaced with your container's name.
 
-8. Activate Ollama
+7. Activate Ollama
    ```sh
    ollama serve
    ```
    You can open the browser and enter http://127.0.0.1:11434 to check if the Ollama server is operating normally.
 
-9. Download the llama3
+8. Download the llama3
    ```sh
    ollama pull gemma2:2b
    ```
-   
-10. Download the embedding model
-    ```sh
-    ollama pull all-minilm
-    ```
+
+9. Download the embedding model
+   ```sh
+   ollama pull all-minilm
+   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
