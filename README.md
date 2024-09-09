@@ -77,9 +77,9 @@ To get a local copy up and running, follow these simple steps.
    ```
    
 10. Download the embedding model
-   ```sh
-   ollama pull all-minilm
-   ```
+    ```sh
+    ollama pull all-minilm
+    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
