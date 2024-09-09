@@ -115,7 +115,7 @@ To get a local copy up and running, follow these simple steps.
    python main.py populate --reset
   ```
 
-* Or you can clear the database using the following command.
+* You can clear the database using the following command.
    ```sh
    python main.py clear
   ```
