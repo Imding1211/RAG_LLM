@@ -85,6 +85,8 @@ To get a local copy up and running, follow these simple steps.
 
 ## Usage
 
+* Place the PDF to be read into the data folder.
+
 * When running it for the first time, you need to create the ChromaDB database first.
    ```sh
    python main.py populate
